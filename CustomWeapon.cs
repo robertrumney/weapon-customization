@@ -28,6 +28,9 @@ public class CustomWeapon : MonoBehaviour
     [Header("Weapon Behavior")]
     public WeaponBehavior weaponBehaviour;
 
+    [Header("Sniper Scope UI Effect")]
+    public SniperEffect sniperEffect;
+
     [Header("UI Components")]
     public GameObject crosshairUI;
 
@@ -107,14 +110,26 @@ public class CustomWeapon : MonoBehaviour
                 crosshairUI.SetActive(false);
             }
 
+            // Check for scope and enable sniper UI
+            if (index == 2)
+            {
+                sniperEffect.enabled = true;
+            }
+            else
+            {
+                sniperEffect.enabled = false;
+            }
+
             // Check for flamethrower scope and enable flamethrower script
             if (index == 2)
             {
                 flamethrowerScript.SetActive(true);
+                weaponBehaviour.canZoom = false;
             }
             else
             {
                 flamethrowerScript.SetActive(false);
+                weaponBehaviour.canZoom = true;
             }
 
             currentScope = index;
