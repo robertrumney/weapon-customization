@@ -1,6 +1,6 @@
 # Custom Weapon System
 
-Welcome to my Custom Weapon System repository! This project is currently a Work in Progress (W.I.P.), and I'm in the process of refining and enhancing it. Stay tuned for updates and exciting new features. Feel free to explore the code and provide any feedback or suggestions.
+Welcome to my Custom Weapon System repository! This project is currently a Work in Progress (W.I.P.), and I'm in the process of refining and enhancing it. Feel free to explore the code and provide any feedback or suggestions.
 
 ## Overview
 
