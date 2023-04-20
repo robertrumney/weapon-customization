@@ -12,21 +12,21 @@ public class CustomWeapon : MonoBehaviour
     public List<GameObject> barrelTypes;
     public List<GameObject> scopeTypes;
 
-    [Header("Current Modules")]
-    public int currentMagazine;
-    public int currentBarrel;
-    public int currentScope;
-
     [Header("Module Unlocked States")]
     public bool[] isMagazineUnlocked;
     public bool[] isBarrelUnlocked;
     public bool[] isScopeUnlocked;
 
-    [Header("Weapon Behavior")]
-    public WeaponBehavior weaponBehaviour;
-
     [Header("Barrel Audio Clips")]
     public AudioClip[] barrelAudioClips;
+
+    [Header("Current Modules")]
+    public int currentMagazine;
+    public int currentBarrel;
+    public int currentScope;
+
+    [Header("Weapon Behavior")]
+    public WeaponBehavior weaponBehaviour;
 
     [Header("UI Components")]
     public GameObject crosshairUI;
