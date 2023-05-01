@@ -143,4 +143,40 @@ public class CustomWeapon : MonoBehaviour
         SwitchBarrel(1);
         SwitchScope(2);
     }
+    
+    public void NextMagazine()
+    {
+        int newIndex = (currentMagazine + 1) % magazineTypes.Count;
+        SwitchMagazine(newIndex);
+    }
+
+    public void PreviousMagazine()
+    {
+        int newIndex = (currentMagazine - 1 + magazineTypes.Count) % magazineTypes.Count;
+        SwitchMagazine(newIndex);
+    }
+
+    public void NextBarrel()
+    {
+        int newIndex = (currentBarrel + 1) % barrelTypes.Count;
+        SwitchBarrel(newIndex);
+    }
+
+    public void PreviousBarrel()
+    {
+        int newIndex = (currentBarrel - 1 + barrelTypes.Count) % barrelTypes.Count;
+        SwitchBarrel(newIndex);
+    }
+
+    public void NextScope()
+    {
+        int newIndex = (currentScope + 1) % scopeTypes.Count;
+        SwitchScope(newIndex);
+    }
+
+    public void PreviousScope()
+    {
+        int newIndex = (currentScope - 1 + scopeTypes.Count) % scopeTypes.Count;
+        SwitchScope(newIndex);
+    }
 }
