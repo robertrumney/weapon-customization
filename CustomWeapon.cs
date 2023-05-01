@@ -69,7 +69,7 @@ public class CustomWeapon : MonoBehaviour
                 magazineTypes[index].SetActive(true);
 
             // Example of adjusting ammo based on magazine type
-            weaponBehaviour.bulletsPerClip = index * 10;
+            weaponBehaviour.bulletsPerClip = (index + 1) * 10;
 
             currentMagazine = index;
         }
