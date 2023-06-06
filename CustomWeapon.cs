@@ -1,9 +1,10 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class CustomWeapon : MonoBehaviour
 {
+    public MouseOrbitCS mouseOrbit;
+
     [Header("Base Gun")]
     public GameObject baseGun;
 
@@ -34,28 +35,29 @@ public class CustomWeapon : MonoBehaviour
     [Header("UI Components")]
     public GameObject crosshairUI;
 
-    [Header("Private Components")]
-    private AudioSource audioSource;
-
     [SerializeField]
     private GameObject flamethrowerScript;
 
+    [SerializeField]
+    private GameObject freezeRayScript;
+
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-
         for (int i = 0; i < magazineTypes.Count; i++) isMagazineUnlocked[i] = true;
         for (int i = 0; i < barrelTypes.Count; i++) isBarrelUnlocked[i] = true;
         for (int i = 0; i < scopeTypes.Count; i++) isScopeUnlocked[i] = true;
 
-        // Set default values
-        currentMagazine = 0;
-        currentBarrel = 0;
-        currentScope = 0;
+        ApplyPreset();
+    }
 
-        SwitchMagazine(currentMagazine);
-        SwitchBarrel(currentBarrel);
-        SwitchScope(currentScope);
+    private void OnEnable()
+    {
+        weaponBehaviour.weaponUnzoomXPosition = -0.04f;
+        weaponBehaviour.weaponUnzoomYPosition = 0;
+        weaponBehaviour.weaponUnzoomZPosition = -0.1f;
+
+        scopeTypes[1].transform.localPosition = new(0.0f, 0.08f, 0.1874954f);
+        barrelTypes[0].transform.GetChild(0).localPosition = new(0, 0, -0.348f);
     }
 
     public void SwitchMagazine(int index)
@@ -69,7 +71,11 @@ public class CustomWeapon : MonoBehaviour
                 magazineTypes[index].SetActive(true);
 
             // Example of adjusting ammo based on magazine type
-            weaponBehaviour.bulletsPerClip = (index + 1) * 10;
+            weaponBehaviour.bulletsPerClip = (((index+1) * 10)*(index+1)) * 3;
+            weaponBehaviour.bulletsToReload = weaponBehaviour.bulletsPerClip;
+
+            if(magazineTypes[index])
+                mouseOrbit.target = magazineTypes[index].transform;
 
             currentMagazine = index;
         }
@@ -85,8 +91,41 @@ public class CustomWeapon : MonoBehaviour
             if (barrelTypes[index])
                 barrelTypes[index].SetActive(true);
 
-            audioSource.clip = barrelAudioClips[index];
             currentBarrel = index;
+
+            if (barrelTypes[index])
+                mouseOrbit.target = barrelTypes[index].transform;
+
+            if (index == 0)
+            {
+                weaponBehaviour.semiAuto = false;
+                weaponBehaviour.fireRate = 0.097f;
+                weaponBehaviour.damage = 55;
+            }
+
+            if (index == 1)
+            {
+                weaponBehaviour.semiAuto = true;
+                weaponBehaviour.fireRate = 0.097f;
+                weaponBehaviour.damage = 60;
+            }
+
+            if (index == 2)
+            {
+                weaponBehaviour.semiAuto = false;
+                weaponBehaviour.fireRate = 0.0485f;
+                weaponBehaviour.damage = 15;
+            }
+        }
+    }
+
+    private bool isHamr = false;
+
+    public void OnHAMR()
+    {
+        if(isHamr)
+        {
+            Game.instance.Discover("PRESS [" + Game.instance.settings.controls.holsterWeapon.ToString() + "] TO SWITCH HAMR SCOPE TYPE");
         }
     }
 
@@ -101,17 +140,22 @@ public class CustomWeapon : MonoBehaviour
                 scopeTypes[index].SetActive(true);
 
             // Check for "no scope" and enable UI crosshair
-            if (index == 0)
+            if (index == 1)
             {
-                crosshairUI.SetActive(true);
+                crosshairUI.GetComponent<UnityEngine.UI.RawImage>().enabled = false; 
+                sniperEffect.switchEnabled = true;
+                isHamr = true;
             }
             else
             {
-                crosshairUI.SetActive(false);
+                crosshairUI.GetComponent<UnityEngine.UI.RawImage>().enabled = true; 
+                sniperEffect.switchEnabled = false;
+                sniperEffect.ForceReset();
+                isHamr = false;
             }
 
             // Check for scope and enable sniper UI
-            if (index == 2)
+            if (index == 1 || index == 0)
             {
                 sniperEffect.enabled = true;
             }
@@ -120,17 +164,28 @@ public class CustomWeapon : MonoBehaviour
                 sniperEffect.enabled = false;
             }
 
-            // Check for flamethrower scope and enable flamethrower script
+            // Check for flamethrower/scope/freezeray/shrinkray 
             if (index == 2)
             {
                 flamethrowerScript.SetActive(true);
+                freezeRayScript.SetActive(false);
+                weaponBehaviour.canZoom = false;
+            }
+            else if(index == 3)
+            {
+                flamethrowerScript.SetActive(false);
+                freezeRayScript.SetActive(true);
                 weaponBehaviour.canZoom = false;
             }
             else
             {
                 flamethrowerScript.SetActive(false);
+                freezeRayScript.SetActive(false);
                 weaponBehaviour.canZoom = true;
             }
+
+            if (scopeTypes[index])
+                mouseOrbit.target = scopeTypes[index].transform;
 
             currentScope = index;
         }
@@ -139,11 +194,11 @@ public class CustomWeapon : MonoBehaviour
     // Example preset combination
     public void ApplyPreset()
     {
-        SwitchMagazine(0);
-        SwitchBarrel(1);
-        SwitchScope(2);
+        SwitchMagazine(2);
+        SwitchBarrel(0);
+        SwitchScope(1);
     }
-    
+
     public void NextMagazine()
     {
         int newIndex = (currentMagazine + 1) % magazineTypes.Count;
